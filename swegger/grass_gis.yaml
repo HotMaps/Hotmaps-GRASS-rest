@@ -1,0 +1,165 @@
+swagger: '2.0'
+info:
+  version: "1.0.0"
+  title: grass-rest
+  description: The REST API for the GRASS GIS project
+  contact:
+    name: Pietro Zambelli
+    url: http://www.eurac.edu/it/research/technologies/renewableenergy/staff/pages/staffdetails.aspx?persId=33943
+    email: pzambelli@eurac.edu
+  license:
+    name: Mozilla 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+schemes:
+  - https
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+
+# =====
+# PATHS
+# =====
+paths:
+  /modules:
+    get:
+      tags:
+      - Modules
+      description: returns all available GRASS GIS modules
+      operationId: get_modules
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+        format: int32
+        description: max number of records to return
+      responses:
+        200:
+          description: All the GRASS GIS modules
+          schema:
+            type: array
+            items:
+              type: string
+              format: uri
+              example: r.slope.aspect
+  /modules/{modulename}:
+    get:
+      tags:
+      - Modules
+      description: returns all module informations
+      operationId: get_module
+      parameters:
+      - name: "modulename"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "response"
+          schema:
+            $ref: '#/definitions/Module'
+
+
+# ===========
+# DEFINITIONS
+# ===========
+definitions:
+  Module:
+    type: object
+    properties:
+      name:
+        example: r.slope.aspect
+        type: string
+      label:
+        example: Generates raster maps of slope, aspect, curvatures and partial derivatives from an elevation raster map.
+        type: string
+      description:
+        example: Aspect is calculated counterclockwise from east.
+        type: string
+      keywords:
+        type: array
+        items:
+          $ref: '#/definitions/KeyWord'
+        example: raster, terrain, aspect, slope, curvature
+# [Style Validator (3a9db96f-b9df-4ed7-9457-63e126777243) : All model properties must have examples]: Field 'example' required in 'properties'
+      parameters:
+        type: array
+        items:
+          $ref: '#/definitions/Parameter'
+# [Style Validator (3a9db96f-b9df-4ed7-9457-63e126777243) : All model properties must have examples]: Field 'example' required in 'properties'
+      flags:
+        type: array
+        items:
+          $ref: '#/definitions/Flag'
+    description: ok
+    
+  KeyWord:
+    type: object
+    properties:
+      name:
+        type: string
+        example: raster
+
+  Parameter:
+    type: object
+    properties:
+      name:
+        type: string
+        example: elevation
+      value:
+        type: string
+        example: DTM_10m
+      vtype:
+        type: string
+        enum:
+        - integer
+        - float
+        - double
+        - raster
+        - vector
+        example: raster
+      ptype:
+        type: string
+        enum:
+        - input
+        - output
+        example: input
+      required:
+        type: boolean
+        example: True
+      multi:
+        type: boolean
+        example: False
+      range:
+        type: boolean
+        example: False
+      rangemin:
+        type: number
+        example: 0
+      rangemax:
+        type: number
+        example: 0
+      guisection:
+        type: string
+        example: required
+
+  Flag:
+    type: object
+    properties:
+      name:
+        example: overwrite
+        type: string
+      description:
+        example: Allow output files to overwrite existing files
+        type: string
+      special:
+        example: True
+        type: boolean
+      guisection:
+        example: settings
+        type: string
+
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /EURAC/grest/1.0.0
