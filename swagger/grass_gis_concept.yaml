@@ -1,0 +1,439 @@
+swagger: '2.0'
+info:
+  version: "1.0.0"
+  title: grass-rest
+  description: The REST API for the GRASS GIS project
+  contact:
+    name: Pietro Zambelli
+    url: http://www.eurac.edu/it/research/technologies/renewableenergy/staff/pages/staffdetails.aspx?persId=33943
+    email: pzambelli@eurac.edu
+  license:
+    name: Mozilla 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+schemes:
+  - https
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+
+# =====
+# PATHS
+# =====
+paths:
+  # -------
+  # MODULES
+  # -------
+  /modules:
+    get: return a list of modules
+  /modules/search:
+    get: return a list of modules (using: g.search.modules)
+  /modules/{modulename}:
+    get: return a Module
+
+  # ----
+  # DATA
+  # ----
+  # GISBASE
+  /data/gisbases:
+    get: return a list of gisbases
+
+  data/by_user:
+    get: list of gisbases used by user or visible to the user
+
+  data/{gisbase_name}:
+    get: return a Gisbase
+    put: update a gisbase
+    post: create a gisbase
+    delete: delete a gisbase
+
+  data/{gisbase_name}/locations:
+    get: return a list of locations
+    
+  data/{gisbase_name}/by_user:
+    get: return a list of the locations used or visible to the user
+    
+  
+  # LOCATION
+  data/{gisbase_name}/{location_name}:
+    get: return a Location
+    post: add a new location
+    put: update an existing location
+    delete: delete an existing location
+      
+  data/{gisbase_name}/{location_name}/mapsets:
+    get: return a list of mapsets
+      
+  data/{gisbase_name}/{location_name}/by_user:
+    get: return a list of user available mapsets
+    
+  
+  # MAPSET
+  data/{gisbase_name}/{location_name}/{mapset_name}:
+    get: return a Mapset
+    post: add a new mapset
+    put: update an existing mapset
+    delete: delete an exisitng mapset
+
+  # MAPSET:RASTER
+  data/{gisbase_name}/{location_name}/{mapset_name}/rasters:
+    get: return a list of raster
+    
+  data/{gisbase_name}/{location_name}/{mapset_name}/rasters/{raster_name}:
+    get: return a Raster
+    put: update an existing raster meta-data
+    delete: delete an existing raster
+    
+  data/{gisbase_name}/{location_name}/{mapset_name}/available_rasters:
+    get: return a list of available rasters names (including rasters from other mapsets)
+
+  # MAPSET:REGION
+  data/{gisbase_name}/{location_name}/{mapset_name}/regions:
+    get: return a list of regions
+
+  data/{gisbase_name}/{location_name}/{mapset_name}/regions/{region_name}:
+    get: return a Region
+    post: create a new region
+    put: update an existing region
+    delete: delete an exisiting region
+    
+  data/{gisbase_name}/{location_name}/{mapset_name}/regions/{region_name}/current:
+    post: set the current region
+  data/{gisbase_name}/{location_name}/{mapset_name}/regions/{region_name}/default:
+    post: set the default region
+
+  # MAPSET:VECTOR
+  data/{gisbase_name}/{location_name}/{mapset_name}/vectors:
+    get: return a list of vectors
+  
+  data/{gisbase_name}/{location_name}/{mapset_name}/vectors/{vector_name}:
+    get: return a Vector
+    put: update an existing vector meta-data
+    delete: delete an existing vector
+
+  data/{gisbase_name}/{location_name}/{mapset_name}/available_vectors:
+    get: return a list of available vectors name (including vectors from other mapsets)
+
+  
+  # ----
+  # JOBS
+  # ----
+  jobs/by_status/{status}:
+    get: return a list of jobs by status (staging|waiting|running|finished|killed)
+    
+  jobs/by_user/{user_id}:
+    get: return a list of jobs by user
+    
+  jobs/{gisbase_name}/{location_name}/{mapset_name}:
+    get: return a list of jobs
+    
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/running:
+    get: return a list of jobs running
+
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/running/{job_id}:
+    get: return Job
+    delete: kill a running job
+
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/waiting:
+    get: return a list of jobs waiting in a queue
+
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/waiting/{job_id}:
+    get: return a Job
+    post: add a new job into the waiting list
+    put: change the job status back to the staging area
+
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/staging:
+    get: return a list of jobs in the staging area
+    post: create a new job
+    put: update an existing job
+    delete: delete an existing job
+
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/finished:
+    get: return a list of fiished jobs
+
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/killed:
+    get: return a list of fiished jobs
+    
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/raster/{raster_name}:
+    get: return the job that generate the raster map
+    
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/vector/{vector_name}:
+    get: return the job that generate the vector map
+
+  # ENVS
+  # set the environmental variables use as default values when running a job
+  # GISBASE:ENVS
+  jobs/{gisbase_name}/envs:
+    get: return the list of default environmental variables for the gisbase
+    post: create a new list of default environmental variables for the gisbase
+    put: update the list of environmental variables
+    delete: delete all the environmental variables
+  
+  jobs/{gisbase_name}/envs/{key}:
+    get: return the value of the environmental variable
+    post: add a new environmental variable
+    put: update an existing environmental variable
+    delete: delete an existing environmental variable
+
+  # LOCATION:ENVS
+  jobs/{gisbase_name}/{location_name}/envs:
+    get: return a list of default environmental variables for the location
+
+  jobs/{gisbase_name}/{location_name}/envs/{key}:
+    get: return the value of the environmental variable
+    post: add a new environmental variable
+    put: update an existing environmental variable
+    delete: delete an existing environmental variable
+  
+  # MAPSET:ENVS
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/envs:
+    get: return a list of default environmental variables for the mapset
+
+  jobs/{gisbase_name}/{location_name}/{mapset_name}/envs/{key}:
+    get: return the value of the environmental variable
+    post: add a new environmental variable
+    put: update an existing environmental variable
+    delete: delete an existing environmental variable
+
+
+# ===========
+# DEFINITIONS
+# ===========
+definitions:
+  Module:
+    type: object
+    properties:
+      name:
+        example: r.slope.aspect
+        type: string
+      label:
+        example: Generates raster maps of slope, aspect, curvatures and partial derivatives from an elevation raster map.
+        type: string
+      description:
+        example: Aspect is calculated counterclockwise from east.
+        type: string
+      keywords:
+        type: array
+        items:
+          $ref: '#/definitions/KeyWord'
+        example: raster, terrain, aspect, slope, curvature
+      parameters:
+        type: array
+        items:
+          $ref: '#/definitions/Parameter'
+      flags:
+        type: array
+        items:
+          $ref: '#/definitions/Flag'
+    description: ok
+    
+  KeyWord:
+    type: object
+    properties:
+      name:
+        type: string
+        example: raster
+
+  Parameter:
+    type: object
+    properties:
+      name:
+        type: string
+        example: elevation
+      value:
+        type: string
+        example: DTM_10m
+      vtype:
+        type: string
+        enum:
+        - integer
+        - float
+        - double
+        - raster
+        - vector
+        example: raster
+      ptype:
+        type: string
+        enum:
+        - input
+        - output
+        example: input
+      required:
+        type: boolean
+        example: True
+      multi:
+        type: boolean
+        example: False
+      range:
+        type: boolean
+        example: False
+      rangemin:
+        type: number
+        example: 0
+      rangemax:
+        type: number
+        example: 0
+      guisection:
+        type: string
+        example: required
+
+  Flag:
+    type: object
+    properties:
+      name:
+        example: overwrite
+        type: string
+      value:
+        type: boolean
+        example: True
+      description:
+        example: Allow output files to overwrite existing files
+        type: string
+      special:
+        example: True
+        type: boolean
+      guisection:
+        example: settings
+        type: string
+
+  Env:
+    type: object
+    properties:
+      name:
+        type: string
+        example: GRASS_COMPRESS_NULLS
+      value:
+        type: string
+        example: 1
+      description:
+        type: string
+        example: Compress nulls files
+
+  Task:
+    type: object
+    properties:
+      uuid:
+        type: string
+        format: uuid
+        example: 85a4168b-53a7-3a9f-983f-cd73f31fc3b8
+      module:
+        $ref: '#/definitions/Module'
+      status:
+        type: string
+        enum:
+        - not execute
+        - running
+        - finished
+        - killed
+      envs:
+        type: array
+        items: 
+          $ref: '#/definitions/Env'
+      process:
+        return_code:
+          type: integer
+        stdout:
+          type: string
+        stderr:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        duration:
+          type: numeric # seconds
+  
+  Job:
+    type: object
+    properties:
+      uuid:
+        type: string
+        format: uuid
+        example: 85a4168b-53a7-3a9f-983f-cd73f31fc3b8
+      task:
+        type: array
+        items:
+          $ref: '#/definitions/Task'
+      mapset:
+        $ref: '#/definitions/Mapset'
+      user:
+        type: string
+      status:
+        type: string
+        enum:
+        - staging
+        - waiting
+        - running
+        - finished
+        - killed
+      envs:
+        type: array
+        items: 
+          $ref: '#/definitions/Env'
+      process:
+        return_code:
+          type: integer
+          enum:
+          - success
+          - failed
+          - killed
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        duration:
+          type: numeric # seconds
+
+  Gisbase:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      path:
+        type: string
+      envs:
+        type: array
+        items: 
+          $ref: '#/definitions/Env'
+          
+  
+  Location:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      proj:
+        type: string
+      path:
+        type: string
+      envs:
+        type: array
+        items: 
+          $ref: '#/definitions/Env'
+        
+  Mapset:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      path:
+        type: string
+      envs:
+        type: array
+        items: 
+          $ref: '#/definitions/Env'
+
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /EURAC/grest/1.0.0
