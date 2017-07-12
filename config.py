@@ -25,7 +25,7 @@ class BaseConfig(object):
 
     # SQLITE
     SQLALCHEMY_DATABASE_URI = os.environ.get('GREST_SQLALCHEMY_DATABASE_URI',
-            'sqlite:///%s' % (os.path.join(PROJECT_ROOT, "grass-dev.db")))
+            'sqlite:///%s' % (os.path.join(PROJECT_ROOT, "grass-rest.db")))
     DEBUG = os.environ.get('GREST_DEBUG', False)
 
     AUTHORIZATIONS = {
