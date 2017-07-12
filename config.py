@@ -1,12 +1,14 @@
 # pylint: disable=too-few-public-methods,invalid-name,missing-docstring
 import os
+from dotenv import load_dotenv
 
 
 class BaseConfig(object):
-    SECRET_KEY = 'this-really-needs-to-be-changed'
-
+    """Define base configuration for the GRASS-rest API"""
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-
+    load_dotenv(os.path.join(PROJECT_ROOT, '.env'))
+    SECRET_KEY = os.environ.get('GREST_SECRET_KEY',
+                                'this-really-needs-to-be-changed')
     # POSTGRESQL
     # DB_USER = 'user'
     # DB_PASSWORD = 'password'
@@ -22,9 +24,9 @@ class BaseConfig(object):
     # )
 
     # SQLITE
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///%s' % (os.path.join(PROJECT_ROOT, "example.db"))
-
-    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('GREST_SQLALCHEMY_DATABASE_URI',
+            'sqlite:///%s' % (os.path.join(PROJECT_ROOT, "grass-dev.db")))
+    DEBUG = os.environ.get('GREST_DEBUG', False)
 
     AUTHORIZATIONS = {
         'oauth2_password': {
@@ -42,21 +44,28 @@ class BaseConfig(object):
         #},
     }
 
-    ENABLED_MODULES = (
-        'auth',
+    ENABLED_MODULES = (os.environ.get('GREST_ENABLED_MODULES').split()
+                       if 'GREST_ENABLED_MODULES' in os.environ else
+                       (
+                            'auth',
 
-        'users',
-        'teams',
+                            'users',
+                            'teams',
 
-        'api',
-    )
+                            'api',
+                        ))
 
-    STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+    STATIC_ROOT = os.environ.get('GREST_STATIC_ROOT',
+                                 os.path.join(PROJECT_ROOT, 'static'))
 
-    SWAGGER_UI_JSONEDITOR = True
-    SWAGGER_UI_OAUTH_CLIENT_ID = 'documentation'
-    SWAGGER_UI_OAUTH_REALM = "Authentication for Flask-RESTplus Example server documentation"
-    SWAGGER_UI_OAUTH_APP_NAME = "Flask-RESTplus Example server documentation"
+    SWAGGER_UI_JSONEDITOR = os.environ.get('GREST_SWAGGER_UI_JSONEDITOR',
+                                           True)
+    SWAGGER_UI_OAUTH_CLIENT_ID = os.environ.get('GREST_SWAGGER_UI_OAUTH_CLIENT_ID',
+                                                'documentation')
+    SWAGGER_UI_OAUTH_REALM = os.environ.get('GREST_SWAGGER_UI_OAUTH_REALM',
+                                            "Authentication for GRASS-rest server documentation")
+    SWAGGER_UI_OAUTH_APP_NAME = os.environ.get('GREST_SWAGGER_UI_OAUTH_APP_NAME',
+                                               "GRASS-rest server documentation")
 
     # TODO: consider if these are relevant for this project
     SQLALCHEMY_TRACK_MODIFICATIONS = True
@@ -64,7 +73,7 @@ class BaseConfig(object):
 
 
 class ProductionConfig(BaseConfig):
-    SECRET_KEY = os.getenv('CLOUDSML_API_SERVER_SECRET_KEY')
+    SECRET_KEY = os.getenv('GREST_SERVER_SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.getenv('CLOUDSML_API_SERVER_SQLALCHEMY_DATABASE_URI')
 
 
